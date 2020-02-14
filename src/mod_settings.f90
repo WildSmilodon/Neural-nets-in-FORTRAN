@@ -26,10 +26,10 @@ contains
     type (SettingsType) :: stg
 
     ! available test cases = tdSin, tdCos, tdLin, tdPar, tdSin2, tdSinNoise, tdParSin
-    stg%testCase = tdParSin
+    stg%testCase = tdSin
 
     ! number of train data points  
-    stg%ntd=666
+    stg%ntd=66
 
     ! number of verify data points  
     stg%nvd=100
@@ -48,7 +48,7 @@ contains
     stg%nIter = 50000
 
     ! learning rate
-    stg%lr = 0.001_rk  
+    stg%lr = 0.01_rk  
 
     ! create neural network
     stg%nL = 4
