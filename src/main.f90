@@ -1,13 +1,12 @@
 program nnTest
-  use mCommon
-  use mSettings
+  use mCommon      ! provides parameters and object type definitions
+  use mSettings    ! provides the stg object, which hold all neural net and test case settings
   use mTrainingData
   use mNeuralNet
   implicit none
    
   
-  type (SettingsType) :: stg     ! settings
-  type (NeuralNet) :: nn            ! neural net
+  type (NeuralNet) :: nn         ! neural net
   type (TrainingDataType) :: td  ! training data
   type (TrainingDataType) :: vd  ! verify data
 
@@ -15,10 +14,10 @@ program nnTest
   call seed_rnd_generator()
 
   ! get settings 
-  call getSettings(stg)
+  call getSettings()
 
   ! create neural net object
-  nn = nnCreate(stg%nL,stg%ll,stg%aft,stg%lr)
+  nn = nnCreate()
 
   ! show optimization problem size
   print *,"Number of weights and biases = ",nn%nProblemSize
@@ -30,7 +29,7 @@ program nnTest
   vd = tdCreate(stg%nvd,nn%inpLength,nn%outLength,stg%testCase,stg%verifyDataXdist)
 
   ! train the nerural net
-  call nnTrain(nn,td,stg%optAlgo,stg%nIter)
+  call nnTrain(nn,td)
 
   ! verify results
   print *,"L2 norm of training data = ",nn%L2norm 

@@ -10,20 +10,25 @@ module mSettings
     integer trainDataXdist ! distribution of x points for training data = tdXlin, tdXrnd
     integer verifyDataXdist ! distribution of x points for verify data = tdXlin, tdXrnd
     integer optAlgo ! optimization algorithm = nnOptMonteCarlo, nnOptGradDesc
-    integer nIter ! number of training iterations
-    real(rk) lr ! learning rate
+    
     integer nL ! number of neurons
     integer, pointer :: ll(:)  ! neuron lengths
     integer, pointer :: aft(:) ! activation function type
     integer exportVerifyData ! yes/no
 
+    ! gradient descent data
+    real(rk) lr ! learning rate
+    integer nIter ! number of training iterations
+
   end type
+
+  type (SettingsType) :: stg     ! settings
 
 contains
 
-  subroutine getSettings(stg)
+  subroutine getSettings()
 
-    type (SettingsType) :: stg
+    !type (SettingsType) :: stg
 
     ! available test cases = tdSin, tdCos, tdLin, tdPar, tdSin2, tdSinNoise, tdParSin
     stg%testCase = tdSin
@@ -60,7 +65,7 @@ contains
     stg%aft(1)=nnSigmoid
     stg%aft(2)=nnSigmoid 
     stg%aft(3)=nnIdentity
-    
+!    
 !    ! define number of layers in the network ( = number of hidden layers + 2 )
 !    stg%nL = 3
 !    allocate (stg%ll(stg%nL),stg%aft(stg%nL-1))
@@ -73,7 +78,7 @@ contains
 !    stg%aft(1)=nnSigmoid
 !    stg%aft(2)=nnIdentity 
 !
-!    ! export verify data to disk
+    ! export verify data to disk
     stg%exportVerifyData = nnYes
 
   end subroutine

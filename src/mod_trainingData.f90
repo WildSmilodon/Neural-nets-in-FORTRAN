@@ -50,7 +50,7 @@ type(TrainingDataType) function tdCreate(n,inpLength,outLength,tdType,tdXtype)
     case (tdSinNoise) 
       do i=1,td%n
         td%y(1,i) = sin(4.0_rk*pi*td%x(1,i)) + 4.0_rk * td%x(1,i)
-        td%y(1,i) = td%y(1,i) +  0.5_rk * ( getRandom01() - 0.5_rk) 
+        td%y(1,i) = td%y(1,i) +  0.5_rk * ( getRandom01() - 0.5_rk ) 
       end do
 
     case (tdSin2) 

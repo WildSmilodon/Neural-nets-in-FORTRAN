@@ -9,24 +9,23 @@ contains
 !
 ! -------------------------------------------------------------------------------------------------
 !
-subroutine nnTrain(nn,td,optAlgo,nIter)
+subroutine nnTrain(nn,td)
 
+  use mSettings
   type(NeuralNet) :: nn,nnC
   type(TrainingDataType) :: td
-  integer, intent(in) :: optAlgo ! optimization algorithm type
-  integer, intent(in) :: nIter ! number of iterations
 
   real(rk) co,minCo
 
   integer j
 
-  select case (optAlgo)
+  select case (stg%optAlgo)
 
     case (nnOptGradDesc) 
       !
       !  Gradient descent optimization strategy
       !
-      do j=1,nIter
+      do j=1,stg%nIter
         call nnTrainGD(nn,td)
       end do
 
@@ -35,12 +34,12 @@ subroutine nnTrain(nn,td,optAlgo,nIter)
       !  Monte Carlo optimization strategy
       !
       ! create copy of the neural net object
-      nnC = nnCreateCopy(nn)
+      nnC = nnCreate()
       ! copy data nn -> nnC
       call nnCopy(nn,nnC)
       
       minCo=111111.0_rk
-      do j=1,nIter
+      do j=1,stg%nIter
         call nnRandomize(nnC)
         co=nnCost(nnC,td)
         if (co.lt.minCo) then ! better solution found
@@ -314,29 +313,6 @@ subroutine nnEval(nn,x,y)
 
 end subroutine
 
-
-!
-! -------------------------------------------------------------------------------------------------
-!
-Type(NeuralNet) function nnCreateCopy(nn)
-
-  type(NeuralNet) :: nn,nnC
-  integer, allocatable :: ll(:)
-  integer j
-
-  allocate (ll(nn%nLayers))
-  do j=1,nn%nLayers
-    ll(j)=nn%neuron(j)%nrow
-  end do
-  nnC = nnCreate(nn%nLayers,ll,nn%AFtype,nn%lr)
-
-  deallocate(ll)
-
-  nnCreateCopy = nnC
-
-end function
-
-
 !
 ! -------------------------------------------------------------------------------------------------
 !
@@ -388,36 +364,33 @@ end subroutine nnCopy
 !
 ! -------------------------------------------------------------------------------------------------
 !
-Type(NeuralNet) function nnCreate(nL,ll,aft,lr)
+Type(NeuralNet) function nnCreate()
 
-  INTEGER nL  ! number of layers
-  real(rk) lr  ! learinign rate
-  INTEGER aft(nL-1) ! activation function type
-  integer ll(nL) ! layer lengths
+  use mSettings
   Type(NeuralNet) nn
-  integer i
-  
-  nn%nLayers = nL
-  nn%nSteps = nL - 1
-  nn%nHiddenLayers = nL - 2
+  integer i 
+
+  nn%nLayers = stg%nL
+  nn%nSteps = stg%nL - 1
+  nn%nHiddenLayers = stg%nL - 2
   nn%nProblemSize = 0
-  nn%lr = lr
+  nn%lr = stg%lr
   ! activation function types
   allocate ( nn%AFtype(nn%nSteps) )
   do i = 1, nn%nSteps
-    nn%AFtype(i) = aft(i)
+    nn%AFtype(i) = stg%aft(i)
   end do
   ! create neurons
   allocate ( nn%neuron(nn%nLayers) )
   do i = 1, nn%nLayers
-    nn%neuron(i)%nrow = ll(i)
+    nn%neuron(i)%nrow = stg%ll(i)
     allocate (nn%neuron(i)%val(nn%neuron(i)%nrow))
   end do
   
   ! create bias vectors
   allocate ( nn%bias(nn%nSteps) )
   do i = 1, nn%nSteps
-    nn%bias(i)%nrow = ll(i+1)
+    nn%bias(i)%nrow = stg%ll(i+1)
     allocate (nn%bias(i)%val(nn%bias(i)%nrow))
     nn%nProblemSize = nn%nProblemSize + nn%bias(i)%nrow
   end do
@@ -425,15 +398,15 @@ Type(NeuralNet) function nnCreate(nL,ll,aft,lr)
 ! create error vectors
   allocate ( nn%error(nn%nSteps) )
   do i = 1, nn%nSteps
-    nn%error(i)%nrow = ll(i+1)
+    nn%error(i)%nrow = stg%ll(i+1)
     allocate (nn%error(i)%val(nn%error(i)%nrow))
   end do
 
   ! create weights
   allocate ( nn%weight(nn%nSteps) )
   do i = 1, nn%nSteps
-    nn%weight(i)%nrow = ll(i+1)
-    nn%weight(i)%ncol = ll(i)
+    nn%weight(i)%nrow = stg%ll(i+1)
+    nn%weight(i)%ncol = stg%ll(i)
     allocate ( nn%weight(i)%val(nn%weight(i)%nrow,nn%weight(i)%ncol) )
     nn%nProblemSize = nn%nProblemSize + nn%weight(i)%nrow*nn%weight(i)%ncol
   end do
