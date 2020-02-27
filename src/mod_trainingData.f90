@@ -89,14 +89,4 @@ type(TrainingDataType) function tdCreate(n,inpLength,outLength,tdType,tdXtype)
 end function
 
 
-!
-! -------------------------------------------------------------------------------------------------
-!
-real(rk) function getRandom01()
-  real(rk) r
-  call random_number(r)
-  getRandom01 = r
-end function
-
-
 end module

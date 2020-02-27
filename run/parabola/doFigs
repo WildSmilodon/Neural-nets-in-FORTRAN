@@ -1,0 +1,30 @@
+#!/bin/bash
+
+dir=$(pwd)
+
+cp nn-vd.csv ../../fig/vd_L2norm_vs_x
+cp nn-td.csv ../../fig/vd_L2norm_vs_x
+
+cp nn-vd.csv ../../fig/vd_nn-true_vs_x
+cp nn-td.csv ../../fig/vd_nn-true_vs_x
+
+cp nn-vd.csv ../../fig/td_nn-train_vs_x
+cp nn-td.csv ../../fig/td_nn-train_vs_x
+
+
+cd ../../fig/vd_L2norm_vs_x/
+./dofig
+cd $dir
+cp ../../fig/vd_L2norm_vs_x/figure.pdf vd_L2norm_vs_x.pdf
+
+cd ../../fig/vd_nn-true_vs_x
+./dofig
+cd $dir
+cp ../../fig/vd_nn-true_vs_x/figure.pdf vd_nn-true_vs_x.pdf
+
+cd ../../fig/td_nn-train_vs_x
+./dofig
+cd $dir
+cp ../../fig/td_nn-train_vs_x/figure.pdf td_nn-train_vs_x.pdf
+
+

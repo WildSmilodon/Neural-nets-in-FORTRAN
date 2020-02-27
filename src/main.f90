@@ -13,8 +13,11 @@ program nnTest
   ! init random generator
   call seed_rnd_generator()
 
+  ! read settings from file
+  call readSettings()
+
   ! get settings 
-  call getSettings()
+  !call getSettings()
 
   ! create neural net object
   nn = nnCreate()
@@ -28,7 +31,7 @@ program nnTest
   ! create verify data
   vd = tdCreate(stg%nvd,nn%inpLength,nn%outLength,stg%testCase,stg%verifyDataXdist)
 
-  ! train the nerural net
+  ! train the neural net
   call nnTrain(nn,td)
 
   ! verify results
@@ -37,8 +40,13 @@ program nnTest
 
   ! export verify data to disk
   if (stg%exportVerifyData.EQ.nnYes) then 
-    call nnExport(nn,td,"nn-td.csv") 
-    call nnExport(nn,vd,"nn-vd.csv") 
+    call nnExport(nn,td,stg%fnTDcsv) 
+    call nnExport(nn,vd,stg%fnVDcsv) 
   end if
     
+  if (stg%exportAsciiNNData.EQ.nnYes) call nnWriteToFile(nn)
+  
+
+
 end program nnTest
+

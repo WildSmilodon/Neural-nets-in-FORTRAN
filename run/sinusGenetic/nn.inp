@@ -1,0 +1,44 @@
+#
+# nn input file
+#
+# test case name : Sinus, Cosinus, Linear, parabola, sinusNoise
+TestCase Sinus
+
+# number of train data points  
+nTrainData 66
+
+# train data x point distribution = Linear, Random
+trainDataXdist Linear 
+
+# number of verify data points  
+nVerifyData 100
+
+# verify data x point distribution = Linear, Random
+verifyDataXdist Random
+
+
+# Optimization algorithm : MonteCarlo, Genetic, GradientDescent
+OptimizationAlgorithm Genetic 
+
+# GradientDescent learning rate
+# LearningRate 0.01
+
+# number of interations
+niterations 500000
+
+# random naumber generator range : X * (rnd01 - 0.5)
+RandomNumRange 30.0
+
+# neuralnetsetup
+NeuralNetSetup 3 1 5 1 Sigmoid Identity
+#NeuralNetSetup 4 1 10 10 1 Sigmoid Sigmoid Identity
+
+
+# Genetic optimization parameters
+# Population size
+PopulationSize 100
+# Cross over rate (0.0-1.0)
+CrossOverRate  0.9
+# Mutation rate (0.0-1.0)
+MutationRate  0.2
+    

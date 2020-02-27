@@ -1,6 +1,6 @@
 PROGRAM = nnTest
 VERSION = 1.0
-OBJECTS =  mod_common.o mod_settings.o mod_trainingData.o mod_nn.o main.o
+OBJECTS =  mod_common.o mod_settings.o mod_trainingData.o mod_nn.o mod_GA.o mod_strings.o lib_GA.o main.o
 
 INST = $(HOME)/bin
 

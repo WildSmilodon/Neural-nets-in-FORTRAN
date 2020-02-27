@@ -1,0 +1,36 @@
+#
+# Neural net output
+#
+# nLayers,nHiddenLayers,nSteps,nProblemSize,inpLength,outLength
+3 1 2 16
+# layer lengths
+1 5 1
+# activation function type, biases, weights
+# step 1
+# activation function type
+Sigmoid
+# biases
+  -1.3478291851907374     
+  0.36190901779408097     
+ -0.99046374400553050     
+   3.2248933357635754     
+ -0.45066142921572538     
+# weights
+  0.70765022378303777     
+  0.12892602922309807     
+  0.28048904123730206     
+  -3.2628681115710205     
+ -0.53356070751327200     
+# step 2
+# activation function type
+Identity
+# biases
+  0.70216875136237400     
+# weights
+   1.2769421655472590     
+  0.47530766854784973     
+  0.27023737767195627     
+  -2.1908077836543827     
+   1.9885521576898106     
+# L2 norm of training data
+   1.2409742328739247E-005

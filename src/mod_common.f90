@@ -19,6 +19,7 @@ module mCommon
 
   integer, parameter :: nnOptGradDesc = 151
   integer, parameter :: nnOptMonteCarlo = 152
+  integer, parameter :: nnOptGenetic = 153
 
   integer, parameter :: tdSin = 201
   integer, parameter :: tdLin = 202
@@ -82,6 +83,36 @@ module mCommon
 ! ----------------------------------------------------------------------
   
 contains
+
+!
+! -------------------------------------------------------------------------------------------------
+!
+real(rk) function getRandom(scale)
+  real(rk) r,scale
+  call random_number(r)
+  getRandom = scale * (r - 0.5_rk)
+end function
+
+!
+! -------------------------------------------------------------------------------------------------
+!
+real(rk) function getRandom01()
+  real(rk) r
+  call random_number(r)
+  getRandom01 = r
+end function
+
+!
+! -------------------------------------------------------------------------------------------------
+!
+integer function getRandom1N(N)
+  integer N
+  real(rk) r
+  r = getRandom01()
+  getRandom1N = floor ( r * N ) + 1
+end function
+
+
 ! ----------------------------------------------------------------------
   subroutine ATxV(a,nrow,ncol,v,res)
 !

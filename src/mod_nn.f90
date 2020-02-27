@@ -29,6 +29,12 @@ subroutine nnTrain(nn,td)
         call nnTrainGD(nn,td)
       end do
 
+    case (nnOptGenetic) 
+      !
+      !  Gradient descent optimization strategy
+      !
+      call ga(nn,td)
+     
     case (nnOptMonteCarlo)
       !
       !  Monte Carlo optimization strategy
@@ -58,6 +64,93 @@ subroutine nnTrain(nn,td)
   nn%L2norm = nnCost(nn,td) 
 
 end subroutine
+
+!
+! -------------------------------------------------------------------------------------------------
+!
+character(20) function nnAFstring(iAF)
+  integer iAF
+
+  select case (iAF)
+    case (nnSigmoid)
+      nnAFstring = "Sigmoid"
+
+    case (nnRELU)
+      nnAFstring = "RELU"
+
+    case (nnIdentity)
+      nnAFstring = "Identity"
+      
+    case (nnSoftPlus)
+      nnAFstring = "SoftPlus"      
+
+    case default
+
+    end select
+  
+end function
+
+
+
+!
+! -------------------------------------------------------------------------------------------------
+!
+subroutine nnPrint(nn,lun)
+
+  type(NeuralNet) :: nn
+  integer lun,i,j,k
+  character(100) fmt
+ 
+  write(lun,'(A)') "#"
+  write(lun,'(A)') "# Neural net output"
+  write(lun,'(A)') "#"
+  write(lun,'(A)') "# nLayers,nHiddenLayers,nSteps,nProblemSize,inpLength,outLength"
+  write(lun,'(4(I0,1X))') nn%nLayers,nn%nHiddenLayers,nn%nSteps,nn%nProblemSize
+  write(lun,'(A)') "# layer lengths"
+  write(fmt,'(A,I0,A)') "(",nn%nLayers,"(I0,1X))"
+  write(lun,fmt) (nn%neuron(i)%nrow,i=1,nn%nLayers)
+  write(lun,'(A)') "# activation function type, biases, weights"
+  do i=1,nn%nSteps
+    write(lun,'(A,I0)') "# step ",i
+    write(lun,'(A)') "# activation function type"
+    write(lun,'(A)' )  trim(nnAFstring(nn%AFtype(i)))
+    write(lun,'(A)') "# biases"
+    do j=1,nn%bias(i)%nrow
+      write(lun,*) nn%bias(i)%val(j)
+    end do
+    write(lun,'(A)') "# weights"
+    do j=1,nn%weight(i)%nrow
+      do k=1,nn%weight(i)%ncol
+        write(lun,*) nn%weight(i)%val(j,k)
+      end do
+    end do
+  end do
+  write(lun,'(A)') "# L2 norm of training data"
+  write(lun,*) nn%L2norm
+
+end subroutine
+
+
+!
+! -------------------------------------------------------------------------------------------------
+!
+subroutine nnWriteToFile(nn)
+  use mSettings
+  type(NeuralNet) :: nn
+  integer lun
+
+  lun=12
+  open(lun,FILE=trim(stg%fnNNout),STATUS='unknown',ERR = 10)
+  call nnPrint(nn,lun)
+  close(lun)
+
+  return
+
+10 continue
+  print *,"ERROR!"  
+
+
+end subroutine  
 !
 ! -------------------------------------------------------------------------------------------------
 !
@@ -423,33 +516,23 @@ Type(NeuralNet) function nnCreate()
 
 end function
 
-!
-! -------------------------------------------------------------------------------------------------
-!
-real(rk) function getRandom()
-  real(rk) r
-  call random_number(r)
-  getRandom = 10.0_rk * r - 5.0_rk
-  !getRandom = r - 0.5_rk
-  !getRandom = 2.0_rk * (r - 0.5_rk)
-end function
-
 
 !
 ! -------------------------------------------------------------------------------------------------
 !
 subroutine nnRandomize(nn)
+  use mSettings
   Type(NeuralNet) nn
   integer i,r,c
   do i = 1, nn%nSteps
     do r = 1,nn%bias(i)%nrow
-      nn%bias(i)%val(r) =  getRandom() 
+      nn%bias(i)%val(r) =  getRandom(stg%rndScale) 
     end do
   end do
   do i = 1, nn%nSteps
     do c = 1,nn%weight(i)%ncol
       do r = 1,nn%weight(i)%nrow
-        nn%weight(i)%val(r,c) = getRandom()
+        nn%weight(i)%val(r,c) = getRandom(stg%rndScale)
       end do
     end do
   end do
